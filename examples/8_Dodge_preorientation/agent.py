@@ -120,10 +120,6 @@ class Agent(BaseAgent):
             if self.timer > self.timeout:
                 next_state = State.RESET
 
-        self.game.my_car.last_input.roll = self.controls.roll
-        self.game.my_car.last_input.pitch = self.controls.pitch
-        self.game.my_car.last_input.yaw = self.controls.yaw
-
         self.timer += self.game.time_delta
         self.state = next_state
 
