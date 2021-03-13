@@ -41,10 +41,12 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE
 
-    - name: List Output
-      working-directory: ${{github.workspace}}
+    - name: Get .pyd file from build output
+      working-directory: ${{github.workspace}}/python/rlutilities
       shell: bash
-      run: find python/rlutilities
+      run: |
+        cp Release/rlutilities.cp37-win_amd64.pyd .
+        rm -rf Release
       
     - name: Generate Stubs
       working-directory: ${{github.workspace}}/python
@@ -55,8 +57,13 @@ jobs:
         rm -rf stubs
         
     - name: List Output
-      working-directory: ${{github.workspace}}
       shell: bash
       run: find python/rlutilities
+      
+    - name: Archive build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: python-bindings
+        path: python/rlutilities
 
 
