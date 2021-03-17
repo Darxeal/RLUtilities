@@ -50,14 +50,6 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE
 
-    # - name: Generate Stubs
-    #   working-directory: ${{github.workspace}}/python
-    #   shell: bash
-    #   run: |
-    #     python pybind11_stubgen.py rlutilities
-    #     cp -r stubs/rlutilities-stubs/rlutilities/* rlutilities
-    #     rm -rf stubs
-      
     - name: ${{ matrix.python-version }} .pyd artifact
       uses: actions/upload-artifact@v2
       with:
@@ -66,10 +58,31 @@ jobs:
 
   release:
     runs-on: windows-latest
+    needs: build
+
     steps:
     - uses: actions/checkout@v2
+
+    - run: mkdir temp
+
     - uses: actions/download-artifact@v2
       with:
-        path: python/rlutilities
+        path: temp
+        
+    - run: cp temp/*/*.pyd python/rlutilities
+
+    - run: cp -r assets python/rlutilities
+
+    - name: Generate Stubs
+      working-directory: ${{github.workspace}}/python
+      run: |
+        python pybind11_stubgen.py rlutilities
+        cp -r stubs/rlutilities-stubs/rlutilities/* rlutilities
+        rm -rf stubs
     - run: ls -R python/rlutilities
-  
+
+    - name: Release artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: release
+        path: python/rlutilities
