@@ -57,7 +57,7 @@ jobs:
         path: python/rlutilities/*.pyd
 
   release:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: build
 
     steps:
@@ -79,10 +79,16 @@ jobs:
         python pybind11_stubgen.py rlutilities
         cp -r stubs/rlutilities-stubs/rlutilities/* rlutilities
         rm -rf stubs
-    - run: ls -R python/rlutilities
 
     - name: Release artifact
       uses: actions/upload-artifact@v2
       with:
         name: release
         path: python/rlutilities
+
+    - name: Create a new release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: python/rlutilities
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
