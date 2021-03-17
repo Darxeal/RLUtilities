@@ -57,7 +57,7 @@ jobs:
         path: python/rlutilities/*.pyd
 
   release:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
 
     steps:
@@ -68,13 +68,14 @@ jobs:
     - uses: actions/download-artifact@v2
       with:
         path: temp
-        
+
     - run: cp temp/*/*.pyd python/rlutilities
 
     - run: cp -r assets python/rlutilities
 
     - name: Generate Stubs
       working-directory: ${{github.workspace}}/python
+      shell: bash
       run: |
         python pybind11_stubgen.py rlutilities
         cp -r stubs/rlutilities-stubs/rlutilities/* rlutilities
